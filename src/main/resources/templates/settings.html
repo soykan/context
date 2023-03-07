@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/bootstrap.bundle.min.js"></script>
+</head>
+<body style="background-color:#f5f6fa;">
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <div class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+            <form role="search" action="/search" method="POST">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="search" class="form-control" placeholder="Search..." aria-label="Search" name="searchText">
+            </form>
+        </div>
+
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
+            <li><a href="/reading-list" class="nav-link px-2 link-dark">Reading List</a></li>
+            <li><a href="/create-article" class="nav-link px-2 link-dark">Create Article</a></li>
+            <li><a th:href="@{/articles(from=${username})}" class="nav-link px-2 link-dark">My Articles</a></li>
+            <li><a th:href="@{'/profile/' + ${username}}" class="nav-link px-2 link-dark">My Profile</a></li>
+            <li><a href="/settings" class="nav-link px-2 link-dark">Settings</a></li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+            <a href="/logout"><button type="button" class="btn btn-danger">Logout</button></a>
+        </div>
+    </header>
+</div>
+
+
+<div class="text-center row">
+    <div class="col"></div>
+    <div class="col">
+    <h2>Settings</h2>
+    <hr/>
+
+    <form method="POST">
+        <h3>Name and Bio</h3>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="text" name="name" placeholder="Name Surname" th:value="${blogUser.name}" /><br/>
+        <textarea name="bio" placeholder="Bio" th:text="${blogUser.bio}"></textarea><br/>
+        <input type="submit" name="nameAndBioSubmitButton" value="Save your name and bio" /><br/>
+    </form>
+    <hr/>
+    <div th:if="${isPasswordPresent}">
+        <form method="POST">
+            <h3>Change Password</h3>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <input type="password" name="currentPassword" placeholder="Current Password" />
+            <input type="password" name="pass1" placeholder="New password" /><br/>
+            <input type="password" name="pass2" placeholder="Retype your new password" /><br/>
+            <input type="submit" name="newPassSubmitButton" value="Save your new password" /><br/>
+        </form>
+    </div>
+    </div>
+    <div class="col"></div>
+</div>
+
+
+
+</body>
+</html>

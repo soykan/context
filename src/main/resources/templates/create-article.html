@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>Create Article | Context</title>
+  <script src="https://cdn.ckeditor.com/ckeditor5/32.0.0/classic/ckeditor.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/bootstrap.bundle.min.js"></script>
+</head>
+<body style="background-color:#f5f6fa;">
+
+
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <div class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+            <form role="search" action="/search" method="POST">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="search" class="form-control" placeholder="Search..." aria-label="Search" name="searchText">
+            </form>
+        </div>
+
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
+            <li><a href="/reading-list" class="nav-link px-2 link-dark">Reading List</a></li>
+            <li><a href="/create-article" class="nav-link px-2 link-dark">Create Article</a></li>
+            <li><a th:href="@{/articles(from=${username})}" class="nav-link px-2 link-dark">My Articles</a></li>
+            <li><a th:href="@{'/profile/' + ${username}}" class="nav-link px-2 link-dark">My Profile</a></li>
+            <li><a href="/settings" class="nav-link px-2 link-dark">Settings</a></li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+                <a href="/logout"><button type="button" class="btn btn-danger">Logout</button></a>
+        </div>
+    </header>
+</div>
+
+
+
+<div class="text-center row">
+    <div class="col"></div>
+    <div class="col">
+    <h3>Create Your Article Here</h3>
+    <hr/>
+    <form action="/create-article" method="POST">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="text" name="title" placeholder="Write your title here" style="width:100%;"/>
+        <textarea name="content" id="editor"></textarea>
+        <br/>
+        <select name="category" id="category" onChange="update()">
+            <option value="0" selected>New Category</option>
+            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.category}"></option>
+        </select>
+        <input type="text" name="categoryText" id="categoryText" placeholder="Insert new category name"/>
+        <br/><br/>
+        <input type="text" name="tags" style="width:100%;" placeholder="Separate your tags with comma" />
+        <br/><br/>
+        <input type="submit" class="btn btn-primary" value="Post Your Article " />
+    </form>
+    </div>
+    <div class="col"></div>
+</div>
+    <script>
+        ClassicEditor
+            .create( document.querySelector( '#editor' ) )
+            .catch( error => {
+                console.error( error );
+            } );
+    </script>
+    <script type="text/javascript">
+        function update() {
+            var select = document.getElementById('category');
+            var option = select.options[select.selectedIndex];
+            if (option.value == 0 || select == null) {
+                document.getElementById('categoryText').value = '';
+            } else {
+                document.getElementById('categoryText').value = option.text;
+            }
+        }
+
+        update();
+    </script>
+
+
+
+</body>
+</html>
+

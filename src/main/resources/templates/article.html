@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/bootstrap.bundle.min.js"></script>
+</head>
+<script>
+    function deleteArticle(result) {
+        if (result) {
+            document.getElementById('deleteForm').submit()
+        }
+    }
+
+    function askUserToDelete() {
+        let result = confirm("Are you sure to delete this article?");
+        deleteArticle(result);
+    }
+
+    function followOrUnfollowTag(formId) {
+        document.getElementById(formId).submit();
+    }
+</script>
+<body style="background-color:#f5f6fa;">
+
+
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <div class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+            <form role="search" action="/search" method="POST">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="search" class="form-control" placeholder="Search..." aria-label="Search" name="searchText">
+            </form>
+        </div>
+
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
+            <li><a href="/reading-list" class="nav-link px-2 link-dark">Reading List</a></li>
+            <li><a href="/create-article" class="nav-link px-2 link-dark">Create Article</a></li>
+            <li><a th:href="@{/articles(from=${username})}" class="nav-link px-2 link-dark">My Articles</a></li>
+            <li><a th:href="@{'/profile/' + ${username}}" class="nav-link px-2 link-dark">My Profile</a></li>
+            <li><a href="/settings" class="nav-link px-2 link-dark">Settings</a></li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+            <div th:if="${loggedIn}">
+                <a href="/logout"><button type="button" class="btn btn-danger">Logout</button></a>
+            </div>
+            <div th:unless="${loggedIn}">
+                <a href="/login"><button type="button" class="btn btn-outline-primary me-2">Login</button></a>
+                <a href="/signup"><button type="button" class="btn btn-primary">Sign-up</button></a>
+            </div>
+        </div>
+    </header>
+</div>
+
+
+<div class="row">
+    <div class="col"></div>
+    <div class="col">
+    <span style="font-size:36px;" th:text="${blogArticle.title}"></span>
+    <hr/>
+    <div th:if="${loggedIn}">
+        <div th:if="${owner}">
+            <form id="editForm" method="POST" th:action="@{/article(id=${blogArticle.id})}" style="display:inline;">
+                <input type="hidden" name="articleId" th:value="${blogArticle.id}" />
+                <input type="hidden" name="edit" />
+                <a href="#" onclick="document.getElementById('editForm').submit()">Edit</a>
+            </form>
+
+            <form id="deleteForm" method="POST" th:action="@{/article(id=${blogArticle.id})}" style="display:inline;">
+                <input type="hidden" name="articleId" th:value="${blogArticle.id}" />
+                <input type="hidden" name="delete" />
+                <a href="#" onclick="askUserToDelete()">Delete</a>
+            </form>
+
+            <form id="hideForm" method="POST" th:action="@{/article(id=${blogArticle.id})}" style="display:inline;">
+                <input type="hidden" name="articleId" th:value="${blogArticle.id}" />
+                <input type="hidden" name="hide" />
+                <a href="#" onclick="document.getElementById('hideForm').submit()" th:text="${visibility}"></a>
+            </form>
+        </div>
+    </div>
+    <p th:utext="${blogArticle.content}"></p>
+        <p>
+            <a th:href="@{'/profile/' + ${username}}" th:text="${username}"></a>
+            &nbsp;-&nbsp;
+            <span th:text="${articleReleaseDate}"></span>
+        </p>
+    <hr/>
+    <span>Category: </span><span th:text="${category}"></span> <br/><hr/>
+
+    <span>Tags:&nbsp;</span>
+    <div th:each="blogTag : ${followingTags}" style="display:inline;">
+    <form th:id="'blogTag' + ${blogTag.id}" method="POST" th:action="@{/article(id=${blogArticle.id})}" style="display:inline;">
+        <input type="hidden" name="articleId" th:value="${blogArticle.id}" />
+        <input type="hidden" name="follow" th:value="${blogTag.id}" />
+        <a href="#" th:onclick="'followOrUnfollowTag(\'blogTag' + ${blogTag.id} + '\')'" th:text="${blogTag.tag} + '&#10004;'"></a>&nbsp;
+    </form>
+    </div>
+    <div th:each="blogTag : ${blogTagList}" style="display:inline;">
+        <span class="badge badge-primary" th:text="${blogTag.tag}"></span>&nbsp;
+    </div>
+    <div th:each="blogTag : ${notFollowedTags}" style="display:inline;">
+        <form th:id="'blogTag' + ${blogTag.id}" method="POST" th:action="@{/article(id=${blogArticle.id})}" style="display:inline;">
+            <input type="hidden" name="articleId" th:value="${blogArticle.id}" />
+            <input type="hidden" name="follow" th:value="${blogTag.id}" />
+            <span class="badge badge-primary">
+                <a href="#" th:onclick="'followOrUnfollowTag(\'blogTag' + ${blogTag.id} + '\')'" th:text="${blogTag.tag}"></a>&nbsp;
+            </span>
+        </form>
+    </div>
+
+
+    <br/><hr/>
+    <span th:text="'Like Count: ' + ${likeCount}"></span>
+    <div th:if="${loggedIn}">
+        <form th:action="@{/article(id=${blogArticle.id})}" method="POST">
+            <input type="hidden" name="articleId" th:value="${blogArticle.id}" />
+            <div th:if="${liked}">
+                <input type="submit" name="like" value="Liked &#10004;" class="btn btn-success btn-sm" />
+            </div>
+            <div th:unless="${liked}">
+                <input type="submit" name="like" value="Like" class="btn btn-success btn-sm" />
+            </div>
+        </form>
+    </div><hr/>
+
+    <a class="twitter-share-button" style="display:inline;"
+       data-size="large">
+        Tweet</a><br/>
+    <div th:if="${loggedIn}" style="display:inline;">
+        <form id="addToReadingListForm" method="POST" th:action="@{/article(id=${blogArticle.id})}" style="display:inline;">
+            <input type="hidden" name="articleId" th:value="${blogArticle.id}" />
+            <input type="hidden" name="add-to-reading-list" />
+            <a class="btn btn-primary btn-sm" href="#" onclick="document.getElementById('addToReadingListForm').submit()" th:text="${saved}"></a>
+        </form>
+        <br/>
+    </div>
+        <br/>
+
+    <div th:if="${isAnyComments}">
+        <h3>Comments:</h3>
+        <span th:each="comment : ${comments}">
+            <hr/>
+            <p th:text="${comment.comment}"></p>
+            <p th:text="'from: ' + ${comment.blogUser.username}"></p><br/>
+        </span>
+    </div>
+
+    <div th:if="${loggedIn}">
+    <form th:action="@{/article(id=${blogArticle.id})}" method="POST">
+        <div class="form-group">
+        <input class="form-control" type="hidden" name="articleId" th:value="${blogArticle.id}" />
+        <textarea  class="form-control" name="commentText" placeholder="Write your comment here"></textarea>
+        <input  class="form-control btn btn-primary btn-sm" type="submit" name="comment" value="Send Comment" />
+        </div>
+    </form>
+        <br/><br/>
+    </div>
+    </div>
+    <div class="col"></div>
+</div>
+
+
+
+</body>
+</html>
