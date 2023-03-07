@@ -21,52 +21,6 @@ import java.util.Optional;
 @Controller
 public class ViewArticleController {
 
-    /*
-    TODO:
-        HAFTA 5:
-            [DONE] Viewing article functionality
-            [DONE] Article like functionality
-        HAFTA 6:
-            [DONE] Show the date on article's page
-            [DONE] Comment
-            Share on twitter[DONE], facebook, linkedin
-            [DONE] Implement 400 error page for get mapping to article without id
-        HAFTA 7:
-            [DONE] Edit, delete, hide options for publisher user when he/she viewing article
-        HAFTA 8:
-            [DONE]Search functionality
-        HAFTA 9:
-            [DONE]Reading list page
-            [DONE]Add article to my list button on article page
-        HAFTA 10:
-            [DONE] While creating / editing article specifying the category
-        HAFTA 11:
-            [DONE] User profile page
-            [DONE] Settings Page & Show username, bio on profile page
-            Show & Edit Profile Photo (Profile page & Settings)
-        HAFTA 12:
-            Following (user || tag) functionality
-                # [DONE] Following users on their profile page
-                # [OPTIONAL] Add submit button to article page to follow author
-                # Make tags clickable on article page to follow tags
-                    # [DONE]Encapsulate tag with <a> element to make tag clickable
-                    # [DONE] Serve tags that already followed with tick symbol
-                        # [DONE] In GetMapping check tag is already followed or not
-                        # [DONE] Edit thymeleaf template to differentiate followed and not followed tags
-                    # [DONE] In Controller's PostMapping code follow and unfollow actions
-                        # [DONE] Create Service Method to follow and unfollow tags and use it in controller
-                # [OPTIONAL] Place tags on main page to follow subjects
-            Suggested articles based on tags & users the user following
-                # [DONE] List articles from followed users
-                # [DONE] List articles from followed tags
-            User interface development
-            Statistics about article read count and read date
-        HAFTA 13:
-            Creating article on another user's page
-        SON HAFTA:
-            create-article.html üzerinden article oluşturulduğunda article sayfasına yönlendir
-            Profil + bio sayfasını düzelt
-     */
 
 
     @Autowired
